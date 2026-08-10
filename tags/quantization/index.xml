@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Quantization on minnnje | Blog</title>
+		<link>http://localhost:1313/tags/quantization/</link>
+		<description>Recent content in Quantization on minnnje | Blog</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Thu, 30 Jul 2026 00:00:00 +0900</lastBuildDate>
+		
+			<atom:link href="http://localhost:1313/tags/quantization/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>EPTQ: Fast and Accurate 2-bit Post-Training Quantization via Factored E8 Lattice</title>
+				<link>http://localhost:1313/papers/2026-07-eptq-factored-e8-quantization/</link>
+				<pubDate>Thu, 30 Jul 2026 00:00:00 +0900</pubDate>
+				<guid>http://localhost:1313/papers/2026-07-eptq-factored-e8-quantization/</guid>
+				<description>&lt;h2 id=&#34;1-한줄-요약&#34;&gt;1. 한줄 요약&lt;/h2&gt;&#xA;&lt;p&gt;\(E_8\) 격자 코드북을 손실 없이 4KB로 재구성한 Factored-\(E_8\)(FE8)에, Sinkhorn-Knopp&#xA;기반 행/열 스케일 정규화와 Kneedle 기반 매트릭스별 adaptive critical weight&#xA;preservation을 결합하여, 2-bit PTQ에서 &amp;ldquo;VQ급 정확도 + FP16을 능가하는 추론&#xA;처리량 + scalar 방법에 가까운 양자화 속도&amp;quot;를 동시에 달성한 논문입니다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;2-읽기-전에-알아두면-좋은-배경지식-prerequisite&#34;&gt;2. 읽기 전에 알아두면 좋은 배경지식 (Prerequisite)&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;PTQ (Post-Training Quantization)&lt;/strong&gt;: 재학습 없이 사전학습된 모델의 가중치를&#xA;저비트로 변환하는 것. Calibration용 입력 \(X\)만 소량 사용해서 양자화 오차를&#xA;최소화하는 파라미터(스케일, 클리핑 등)를 찾는다.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Scalar vs Vector Quantization&lt;/strong&gt;: Scalar는 가중치 하나하나를 독립적으로&#xA;양자화(RTN, GPTQ, AWQ, OmniQuant). Vector Quantization(VQ)은 여러 가중치를&#xA;묶은 벡터 단위로 코드북에서 가장 가까운 점을 찾아 양자화(VPTQ, QTIP, AQLM). 이&#xA;논문의 핵심 배경은 &amp;ldquo;고차원 Vector 양자화가 저차원 Scalar 양자화보다 기하학적으로&#xA;유리하다&amp;quot;는 사실이다.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;격자 양자화(Lattice Quantization) / Sphere Packing&lt;/strong&gt;: n차원 공간을 규칙적인&#xA;격자점으로 채우는 방법. 같은 점 개수라면 점들이 공간을 얼마나 빈틈없이&#xA;채우는지(packing density)에 따라 양자화 오차가 달라진다. \(E_8\) 격자는 8차원에서&#xA;증명된 가장 촘촘한 sphere packing이라, 원점 주변에 밀집하는 Gaussian 분포의&#xA;가중치를 표현하기에 이론적으로 가장 효율적이다.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;GPTQ 스타일 Hessian 오차 보정&lt;/strong&gt;: 한 가중치(또는 벡터)를 양자화한 뒤 생긴 오차를,&#xA;아직 양자화하지 않은 나머지 가중치에 Hessian 역행렬 비율만큼 분산시켜 전체&#xA;reconstruction error를 최소화하는 기법. Cholesky 분해로 열 단위 순차 처리가&#xA;가능해 대형 모델에도 확장된다.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Sinkhorn-Knopp 알고리즘&lt;/strong&gt;: 행렬을 doubly stochastic(행/열 합이 모두 1)하게&#xA;만들기 위해 행/열 정규화를 번갈아 반복 적용하는 알고리즘. 원래는 최적수송&#xA;문제에서 쓰이지만, 이 논문은 &amp;ldquo;행/열의 \(L_1\) 노름을 균일하게 맞춘다&amp;quot;는 목적에&#xA;같은 반복 구조를 재사용한다.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Kneedle 알고리즘&lt;/strong&gt;: 값이 정렬된 곡선에서 &amp;ldquo;완만하게 꺾이는 지점(knee point)&amp;ldquo;을&#xA;자동으로 찾는 방법. 이 논문에서는 중요도 점수 분포에서 &amp;ldquo;여기부터는 중요도가&#xA;거의 없다&amp;quot;로 볼 수 있는 지점을 사람이 임계값을 정하지 않고 자동으로 찾는 데&#xA;쓰인다.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;3-문제-배경-및-정의&#34;&gt;3. 문제 배경 및 정의&lt;/h2&gt;&#xA;&lt;h3 id=&#34;3-1-기존-방법들이-왜-부족한가-motivation&#34;&gt;3-1. 기존 방법들이 왜 부족한가 (Motivation)&lt;/h3&gt;&#xA;&lt;p&gt;논문은 관련 연구를 4개 계열로 나눠 각각의 한계를 짚습니다(Section 2).&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>Example: A Survey of Post-Training Quantization</title>
+				<link>http://localhost:1313/papers/2026-07-example-quantization-survey/</link>
+				<pubDate>Sun, 26 Jul 2026 00:00:00 +0900</pubDate>
+				<guid>http://localhost:1313/papers/2026-07-example-quantization-survey/</guid>
+				<description>&lt;h2 id=&#34;한-줄-요약&#34;&gt;한 줄 요약&lt;/h2&gt;&#xA;&lt;p&gt;PTQ(Post-Training Quantization)의 주요 접근법들을 정리한 예시 문서입니다. 실제 논문 대신&#xA;레이아웃/수식/코드 렌더링 테스트용 더미 콘텐츠입니다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;문제-정의-problem&#34;&gt;문제 정의 (Problem)&lt;/h2&gt;&#xA;&lt;p&gt;LLM의 파라미터를 FP16에서 INT8/INT4로 양자화할 때, 재학습 없이(post-training) 정확도 손실을&#xA;최소화하는 것이 핵심 과제입니다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;핵심-아이디어-method&#34;&gt;핵심 아이디어 (Method)&lt;/h2&gt;&#xA;&lt;p&gt;가중치 \(W\)를 스케일 팩터 \(s\)로 양자화하는 기본 수식은 다음과 같습니다.&lt;/p&gt;&#xA;$$&#xA;W_q = \text{round}\left(\frac{W}{s}\right), \quad s = \frac{\max(|W|)}{2^{b-1} - 1}&#xA;$$&lt;p&gt;여기서 \(b\)는 목표 비트 수입니다. 인라인 수식도 이렇게 \(s\) 처럼 문장 중간에 쓸 수 있습니다.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>Example: LLM Quant Toy Project</title>
+				<link>http://localhost:1313/projects/example-llm-quant-toy/</link>
+				<pubDate>Sun, 26 Jul 2026 00:00:00 +0900</pubDate>
+				<guid>http://localhost:1313/projects/example-llm-quant-toy/</guid>
+				<description>&lt;h2 id=&#34;무엇을-만들었나&#34;&gt;무엇을 만들었나&lt;/h2&gt;&#xA;&lt;p&gt;간단한 INT4 weight quantization 파이프라인 (예시 콘텐츠).ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss&lt;/p&gt;&#xA;&lt;h2 id=&#34;왜-만들었나-동기문제의식&#34;&gt;왜 만들었나 (동기/문제의식)&lt;/h2&gt;&#xA;&lt;p&gt;논문에서 본 PTQ 기법을 직접 구현하며 이해하기 위해.&lt;/p&gt;&#xA;&lt;h2 id=&#34;어떻게-만들었나-아키텍처설계-결정&#34;&gt;어떻게 만들었나 (아키텍처/설계 결정)&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&amp;hellip;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;배운-점--어려웠던-점&#34;&gt;배운 점 / 어려웠던 점&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&amp;hellip;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;다음-개선-방향&#34;&gt;다음 개선 방향&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;GPTQ 방식 적용 비교&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
+			</item>
+	</channel>
+</rss>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ko-KR" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="http://localhost:1313/favicon.ico">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+
+<title>
+  
+    Example: Transformer Attention 메커니즘 복습 | minnnje | Blog
+  
+</title>
+
+
+  
+  
+  
+    
+      <link rel="stylesheet" href="/css/main.css">
+    
+  
+
+
+  
+  
+  
+    
+      <link rel="stylesheet" href="/css/paginate.css">
+    
+  
+
+
+
+
+
+      <script src="/js/main.js" defer></script>
+
+
+
+<meta property="og:url" content="http://localhost:1313/study/2026-1/attention-mechanism-example/">
+	<meta property="og:site_name" content="minnnje | Blog">
+	<meta property="og:title" content="Example: Transformer Attention 메커니즘 복습">
+	<meta property="og:description" content="오늘 배운 것 Scaled dot-product attention의 수식과, 스케일링 \(\sqrt{d_k}\)이 왜 필요한지 (예시 콘텐츠).
+왜 중요한가 (맥락/동기) Quantization/pruning 논문들이 대부분 attention block을 대상으로 하기 때문에, attention 연산 자체를 정확히 알아야 어느 부분을 압축하는지 이해할 수 있음.
+핵심 개념 정리 Query, Key, Value에 대해 다음과 같이 계산합니다.
+$$ \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^{\top}}{\sqrt{d_k}}\right)V $$ \(d_k\)가 커질수록 \(QK^{\top}\)의 분산이 커져 softmax가 saturate되기 쉬움 \(\sqrt{d_k}\)로 나눠 분산을 일정하게 유지 헷갈렸던 부분 / 다시 볼 것 Multi-head attention에서 head마다 파라미터를 따로 갖는 이유를 표현력 관점에서 다시 정리할 것 확인 질문 Attention score를 스케일링하지 않으면 어떤 문제가 생기나? 내적 값의 분산이 \(d_k\)에 비례해 커지면서 softmax 입력값이 극단적으로 커지고, 결과적으로 gradient가 거의 0에 가까워지는 saturation이 발생해 학습이 잘 안 된다.">
+	<meta property="og:locale" content="ko_KR">
+	<meta property="og:type" content="article">
+		<meta property="article:section" content="study">
+		<meta property="article:published_time" content="2026-07-22T00:00:00+09:00">
+		<meta property="article:modified_time" content="2026-07-22T00:00:00+09:00">
+		<meta property="article:tag" content="Transformer">
+		<meta property="article:tag" content="Attention">
+		<meta property="article:tag" content="Deep-Learning">
+
+
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:title" content="Example: Transformer Attention 메커니즘 복습">
+	<meta name="twitter:description" content="오늘 배운 것 Scaled dot-product attention의 수식과, 스케일링 \(\sqrt{d_k}\)이 왜 필요한지 (예시 콘텐츠).
+왜 중요한가 (맥락/동기) Quantization/pruning 논문들이 대부분 attention block을 대상으로 하기 때문에, attention 연산 자체를 정확히 알아야 어느 부분을 압축하는지 이해할 수 있음.
+핵심 개념 정리 Query, Key, Value에 대해 다음과 같이 계산합니다.
+$$ \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^{\top}}{\sqrt{d_k}}\right)V $$ \(d_k\)가 커질수록 \(QK^{\top}\)의 분산이 커져 softmax가 saturate되기 쉬움 \(\sqrt{d_k}\)로 나눠 분산을 일정하게 유지 헷갈렸던 부분 / 다시 볼 것 Multi-head attention에서 head마다 파라미터를 따로 갖는 이유를 표현력 관점에서 다시 정리할 것 확인 질문 Attention score를 스케일링하지 않으면 어떤 문제가 생기나? 내적 값의 분산이 \(d_k\)에 비례해 커지면서 softmax 입력값이 극단적으로 커지고, 결과적으로 gradient가 거의 0에 가까워지는 saturation이 발생해 학습이 잘 안 된다.">
+
+
+	<meta itemprop="name" content="Example: Transformer Attention 메커니즘 복습">
+	<meta itemprop="description" content="오늘 배운 것 Scaled dot-product attention의 수식과, 스케일링 \(\sqrt{d_k}\)이 왜 필요한지 (예시 콘텐츠).
+왜 중요한가 (맥락/동기) Quantization/pruning 논문들이 대부분 attention block을 대상으로 하기 때문에, attention 연산 자체를 정확히 알아야 어느 부분을 압축하는지 이해할 수 있음.
+핵심 개념 정리 Query, Key, Value에 대해 다음과 같이 계산합니다.
+$$ \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^{\top}}{\sqrt{d_k}}\right)V $$ \(d_k\)가 커질수록 \(QK^{\top}\)의 분산이 커져 softmax가 saturate되기 쉬움 \(\sqrt{d_k}\)로 나눠 분산을 일정하게 유지 헷갈렸던 부분 / 다시 볼 것 Multi-head attention에서 head마다 파라미터를 따로 갖는 이유를 표현력 관점에서 다시 정리할 것 확인 질문 Attention score를 스케일링하지 않으면 어떤 문제가 생기나? 내적 값의 분산이 \(d_k\)에 비례해 커지면서 softmax 입력값이 극단적으로 커지고, 결과적으로 gradient가 거의 0에 가까워지는 saturation이 발생해 학습이 잘 안 된다.">
+	<meta itemprop="datePublished" content="2026-07-22T00:00:00+09:00">
+	<meta itemprop="dateModified" content="2026-07-22T00:00:00+09:00">
+	<meta itemprop="wordCount" content="123">
+	<meta itemprop="keywords" content="Transformer,Attention,Deep-Learning">
+
+<link rel="canonical" href="http://localhost:1313/study/2026-1/attention-mechanism-example/" /><meta name="description" content="안녕하세요, 선민제의 기술 블로그입니다." />
+
+
+  
+
+
+
+  
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      displayMath: [['\\[', '\\]'], ['$$', '$$']],  
+      inlineMath: [['\\(', '\\)']]                  
+    },
+    loader:{
+      load: ['ui/safe']
+    },
+  };
+</script>
+
+  
+
+  
+</head>
+<body class="bg-white text-gray-900">
+  <header class="sticky top-0 z-50 py-6 px-8 bg-white shadow-md">
+    <div class="container m-auto flex items-center justify-between">
+  <h1>
+    <a href="/" class="flex items-center gap-2 text-xl font-bold">
+      
+        minnnje | Blog
+      
+    </a>
+  </h1>
+  
+  <nav class="md:block hidden">
+    <ul class="flex gap-4">
+    <li>
+      <a href="/stack/">Stack</a>
+    </li>
+    <li>
+      <a href="/papers/">Papers</a>
+    </li>
+    <li>
+      <a aria-current="true" class="ancestor" href="/study/">Study</a>
+    </li>
+    <li>
+      <a href="/projects/">Projects</a>
+    </li>
+    </ul>
+  </nav>
+
+  <button id="navButton" class="relative z-12 md:hidden block" aria-label="Toggle menu" aria-expanded="false" aria-controls="menu">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+    </svg>
+  </button>
+
+  <nav class="fixed top-0 md:-right-full! -right-full h-full w-full bg-gray-900/30" id="navMenu" style="transition: all .5s;">
+    <ul class="flex flex-col gap-2 w-[12rem] h-full ml-auto p-6 pt-24 bg-white">
+    <li>
+      <a href="/stack/">Stack</a>
+    </li>
+    <li>
+      <a href="/papers/">Papers</a>
+    </li>
+    <li>
+      <a aria-current="true" class="ancestor" href="/study/">Study</a>
+    </li>
+    <li>
+      <a href="/projects/">Projects</a>
+    </li>
+    </ul>
+  </nav>
+
+  <script>
+    const navButton = document.getElementById('navButton');
+    const navMenu = document.getElementById('navMenu');
+
+    navButton.addEventListener('click', function() {
+      if (navMenu.classList.contains('-right-full')) {
+        navMenu.classList.remove('-right-full');
+        navMenu.classList.add('right-0');
+        navButton.setAttribute('aria-expanded', 'true');
+      } else {
+        navMenu.classList.remove('right-0');
+        navMenu.classList.add('-right-full');
+        navButton.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    navMenu.addEventListener('click', function(e) {
+      if (e.target.tagName !== 'NAV') {
+        return;
+      }
+
+      navMenu.classList.remove('right-0');
+      navMenu.classList.add('-right-full');
+      navButton.setAttribute('aria-expanded', 'false');
+    });
+  </script>
+
+</div>
+
+  </header>
+  <main class="p-8">
+    
+  <article class="container mx-auto max-w-5xl lg:flex lg:gap-12 items-start">
+    <div class="min-w-0 max-w-3xl">
+      <a href="/study/2026-1/" class="text-sm text-gray-500 hover:text-teal-600 mb-3 inline-block">← 2026-1</a>
+      <h1 class="text-3xl font-bold mb-4">Example: Transformer Attention 메커니즘 복습</h1>
+
+      
+        <div class="mb-6 p-4 rounded-xl border border-gray-200 bg-gray-50 text-sm space-y-1">
+          <div><strong>Subject</strong> Deep Learning</div>
+        </div>
+      
+
+      <div class="mb-6 flex items-center gap-3 md:justify-start justify-end text-sm text-gray-500">
+        
+
+<time class="text-gray-500 text-sm" datetime="2026-07-22T00:00:00&#43;09:00">2026. 7. 22</time>
+
+        <span>·</span>
+        <span>1분 읽기</span>
+      </div>
+
+      
+        <ul class="flex flex-wrap items-center mb-8 gap-x-2 gap-y-2">
+          
+            <li>
+  <a href="/tags/transformer/" class="tag-chip">Transformer</a>
+</li>
+
+          
+            <li>
+  <a href="/tags/attention/" class="tag-chip">Attention</a>
+</li>
+
+          
+            <li>
+  <a href="/tags/deep-learning/" class="tag-chip">Deep-Learning</a>
+</li>
+
+          
+        </ul>
+      
+
+      <div class="markdown-body mb-10!">
+        <h2 id="오늘-배운-것">오늘 배운 것</h2>
+<p>Scaled dot-product attention의 수식과, 스케일링 \(\sqrt{d_k}\)이 왜 필요한지
+(예시 콘텐츠).</p>
+<h2 id="왜-중요한가-맥락동기">왜 중요한가 (맥락/동기)</h2>
+<p>Quantization/pruning 논문들이 대부분 attention block을 대상으로 하기 때문에,
+attention 연산 자체를 정확히 알아야 어느 부분을 압축하는지 이해할 수 있음.</p>
+<h2 id="핵심-개념-정리">핵심 개념 정리</h2>
+<p>Query, Key, Value에 대해 다음과 같이 계산합니다.</p>
+$$
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^{\top}}{\sqrt{d_k}}\right)V
+$$<ul>
+<li>\(d_k\)가 커질수록 \(QK^{\top}\)의 분산이 커져 softmax가 saturate되기 쉬움</li>
+<li>\(\sqrt{d_k}\)로 나눠 분산을 일정하게 유지</li>
+</ul>
+<h2 id="헷갈렸던-부분--다시-볼-것">헷갈렸던 부분 / 다시 볼 것</h2>
+<ul>
+<li>Multi-head attention에서 head마다 파라미터를 따로 갖는 이유를 표현력 관점에서
+다시 정리할 것</li>
+</ul>
+<h2 id="확인-질문">확인 질문</h2>
+<details>
+<summary>Attention score를 스케일링하지 않으면 어떤 문제가 생기나?</summary>
+<p>내적 값의 분산이 \(d_k\)에 비례해 커지면서 softmax 입력값이 극단적으로 커지고,
+결과적으로 gradient가 거의 0에 가까워지는 saturation이 발생해 학습이 잘 안 된다.</p>
+</details>
+<h2 id="참고-자료">참고 자료</h2>
+<ul>
+<li>Vaswani et al., &ldquo;Attention Is All You Need&rdquo;</li>
+</ul>
+
+      </div>
+    </div>
+
+    
+  <aside class="hidden lg:block sticky top-24 self-start shrink-0 w-[220px]">
+    <div class="text-xs font-bold tracking-wide uppercase text-gray-400 mb-3">On this page</div>
+    <div class="toc-nav"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#오늘-배운-것">오늘 배운 것</a></li>
+    <li><a href="#왜-중요한가-맥락동기">왜 중요한가 (맥락/동기)</a></li>
+    <li><a href="#핵심-개념-정리">핵심 개념 정리</a></li>
+    <li><a href="#헷갈렸던-부분--다시-볼-것">헷갈렸던 부분 / 다시 볼 것</a></li>
+    <li><a href="#확인-질문">확인 질문</a></li>
+    <li><a href="#참고-자료">참고 자료</a></li>
+  </ul>
+</nav></div>
+  </aside>
+
+  </article>
+
+  </main>
+  <footer class="py-6 px-8 bg-white border-t border-t-gray-200">
+    <div
+  class="container m-auto flex md:flex-row flex-col items-center justify-between gap-2 text-gray-400 md:text-base text-sm"
+>
+  <p>&copy; 2026 minnnje.</p>
+  
+  <a
+    href="https://github.com/minnnje"
+    class="underline hover:text-gray-600"
+    target="_blank"
+    rel="noopener"
+    >GitHub</a
+  >
+  
+</div>
+
+  </footer>
+</body>
+</html>

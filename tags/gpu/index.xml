@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Gpu on minnnje | Blog</title>
+		<link>http://localhost:1313/tags/gpu/</link>
+		<description>Recent content in Gpu on minnnje | Blog</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Sat, 18 Jul 2026 00:00:00 +0900</lastBuildDate>
+		
+			<atom:link href="http://localhost:1313/tags/gpu/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Example: CUDA 메모리 계층 구조 정리</title>
+				<link>http://localhost:1313/study/systems/cuda-memory-hierarchy-example/</link>
+				<pubDate>Sat, 18 Jul 2026 00:00:00 +0900</pubDate>
+				<guid>http://localhost:1313/study/systems/cuda-memory-hierarchy-example/</guid>
+				<description>&lt;h2 id=&#34;오늘-배운-것&#34;&gt;오늘 배운 것&lt;/h2&gt;&#xA;&lt;p&gt;Global / Shared / Register 메모리의 속도-용량 트레이드오프와, shared memory를 활용한&#xA;타일링(tiling)으로 global memory 접근 횟수를 줄이는 방법 (예시 콘텐츠).&lt;/p&gt;&#xA;&lt;h2 id=&#34;왜-중요한가-맥락동기&#34;&gt;왜 중요한가 (맥락/동기)&lt;/h2&gt;&#xA;&lt;p&gt;LLM 추론 커널을 최적화하려면 메모리 대역폭이 병목인지 연산량이 병목인지부터&#xA;구분해야 하고, 이때 CUDA 메모리 계층에 대한 이해가 기본 전제가 됨.&lt;/p&gt;&#xA;&lt;h2 id=&#34;핵심-개념-정리&#34;&gt;핵심 개념 정리&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Register: 스레드별 전용, 가장 빠름, 용량 매우 작음&lt;/li&gt;&#xA;&lt;li&gt;Shared memory: 블록 내 스레드가 공유, register보다 느리지만 global보다 훨씬 빠름&lt;/li&gt;&#xA;&lt;li&gt;Global memory: 용량은 크지만 지연시간이 김, coalesced access가 중요&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;헷갈렸던-부분--다시-볼-것&#34;&gt;헷갈렸던 부분 / 다시 볼 것&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Bank conflict가 정확히 언제 발생하는지 다시 정리할 것&lt;/li&gt;&#xA;&lt;li&gt;Shared memory 타일 크기와 occupancy 사이의 트레이드오프&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;확인-질문&#34;&gt;확인 질문&lt;/h2&gt;&#xA;&lt;details&gt;&#xA;&lt;summary&gt;Coalesced memory access란?&lt;/summary&gt;&#xA;&lt;p&gt;같은 warp 내 스레드들이 연속된 global memory 주소에 접근할 때, 하드웨어가 이를 하나의&#xA;트랜잭션으로 묶어 처리하는 것. 접근 패턴이 흩어져 있으면 여러 번의 트랜잭션으로&#xA;쪼개져 대역폭 효율이 떨어진다.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

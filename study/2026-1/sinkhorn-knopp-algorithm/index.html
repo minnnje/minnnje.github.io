@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="ko-KR" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="http://localhost:1313/favicon.ico">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+
+<title>
+  
+    Sinkhorn-Knopp Algorithm — 이중확률행렬부터 EPTQ의 L1 스케일 정규화까지 | minnnje | Blog
+  
+</title>
+
+
+  
+  
+  
+    
+      <link rel="stylesheet" href="/css/main.css">
+    
+  
+
+
+  
+  
+  
+    
+      <link rel="stylesheet" href="/css/paginate.css">
+    
+  
+
+
+
+
+
+      <script src="/js/main.js" defer></script>
+
+
+
+<meta property="og:url" content="http://localhost:1313/study/2026-1/sinkhorn-knopp-algorithm/">
+	<meta property="og:site_name" content="minnnje | Blog">
+	<meta property="og:title" content="Sinkhorn-Knopp Algorithm — 이중확률행렬부터 EPTQ의 L1 스케일 정규화까지">
+	<meta property="og:description" content="오늘 배운 것 Sinkhorn-Knopp 알고리즘을 세 층위로 나눠 정리했다.
+고전 버전(1967): 임의의 양수 행렬을 doubly stochastic matrix(행/열 합이 모두 1)로 바꾸는, 행/열 정규화를 번갈아 반복하는 순수한 행렬 균형화 절차. 최적수송(OT) 버전(Cuturi, 2013): 엔트로피 정규화를 더한 최적수송 문제의 해가 “\(\mathrm{diag}(u)\,K\,\mathrm{diag}(v)\)” 형태를 갖는다는 걸 보이고, 그 스케일 벡터 \(u, v\)를 구하는 데 같은 반복 구조를 재사용한 것. EPTQ에서의 응용: 두 버전과 다른 목적(행/열 합=1이 아니라 행/열 L1 평균의 균일화)으로, 같은 “행 정규화 ↔ 열 정규화 교대” 구조를 가중치 행렬 스케일링에 재사용. 핵심은 세 가지가 전부 **“같은 반복 구조를, 다른 목적함수/제약에 적용”**한다는 점이다.">
+	<meta property="og:locale" content="ko_KR">
+	<meta property="og:type" content="article">
+		<meta property="article:section" content="study">
+		<meta property="article:published_time" content="2026-08-04T00:00:00+09:00">
+		<meta property="article:modified_time" content="2026-08-04T00:00:00+09:00">
+		<meta property="article:tag" content="Sinkhorn-Knopp">
+		<meta property="article:tag" content="Optimal-Transport">
+		<meta property="article:tag" content="Quantization">
+		<meta property="article:tag" content="Linear-Algebra">
+
+
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:title" content="Sinkhorn-Knopp Algorithm — 이중확률행렬부터 EPTQ의 L1 스케일 정규화까지">
+	<meta name="twitter:description" content="오늘 배운 것 Sinkhorn-Knopp 알고리즘을 세 층위로 나눠 정리했다.
+고전 버전(1967): 임의의 양수 행렬을 doubly stochastic matrix(행/열 합이 모두 1)로 바꾸는, 행/열 정규화를 번갈아 반복하는 순수한 행렬 균형화 절차. 최적수송(OT) 버전(Cuturi, 2013): 엔트로피 정규화를 더한 최적수송 문제의 해가 “\(\mathrm{diag}(u)\,K\,\mathrm{diag}(v)\)” 형태를 갖는다는 걸 보이고, 그 스케일 벡터 \(u, v\)를 구하는 데 같은 반복 구조를 재사용한 것. EPTQ에서의 응용: 두 버전과 다른 목적(행/열 합=1이 아니라 행/열 L1 평균의 균일화)으로, 같은 “행 정규화 ↔ 열 정규화 교대” 구조를 가중치 행렬 스케일링에 재사용. 핵심은 세 가지가 전부 **“같은 반복 구조를, 다른 목적함수/제약에 적용”**한다는 점이다.">
+
+
+	<meta itemprop="name" content="Sinkhorn-Knopp Algorithm — 이중확률행렬부터 EPTQ의 L1 스케일 정규화까지">
+	<meta itemprop="description" content="오늘 배운 것 Sinkhorn-Knopp 알고리즘을 세 층위로 나눠 정리했다.
+고전 버전(1967): 임의의 양수 행렬을 doubly stochastic matrix(행/열 합이 모두 1)로 바꾸는, 행/열 정규화를 번갈아 반복하는 순수한 행렬 균형화 절차. 최적수송(OT) 버전(Cuturi, 2013): 엔트로피 정규화를 더한 최적수송 문제의 해가 “\(\mathrm{diag}(u)\,K\,\mathrm{diag}(v)\)” 형태를 갖는다는 걸 보이고, 그 스케일 벡터 \(u, v\)를 구하는 데 같은 반복 구조를 재사용한 것. EPTQ에서의 응용: 두 버전과 다른 목적(행/열 합=1이 아니라 행/열 L1 평균의 균일화)으로, 같은 “행 정규화 ↔ 열 정규화 교대” 구조를 가중치 행렬 스케일링에 재사용. 핵심은 세 가지가 전부 **“같은 반복 구조를, 다른 목적함수/제약에 적용”**한다는 점이다.">
+	<meta itemprop="datePublished" content="2026-08-04T00:00:00+09:00">
+	<meta itemprop="dateModified" content="2026-08-04T00:00:00+09:00">
+	<meta itemprop="wordCount" content="1421">
+	<meta itemprop="keywords" content="Sinkhorn-Knopp,Optimal-Transport,Quantization,Linear-Algebra">
+
+<link rel="canonical" href="http://localhost:1313/study/2026-1/sinkhorn-knopp-algorithm/" /><meta name="description" content="안녕하세요, 선민제의 기술 블로그입니다." />
+
+
+  
+
+
+
+  
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      displayMath: [['\\[', '\\]'], ['$$', '$$']],  
+      inlineMath: [['\\(', '\\)']]                  
+    },
+    loader:{
+      load: ['ui/safe']
+    },
+  };
+</script>
+
+  
+
+  
+</head>
+<body class="bg-white text-gray-900">
+  <header class="sticky top-0 z-50 py-6 px-8 bg-white shadow-md">
+    <div class="container m-auto flex items-center justify-between">
+  <h1>
+    <a href="/" class="flex items-center gap-2 text-xl font-bold">
+      
+        minnnje | Blog
+      
+    </a>
+  </h1>
+  
+  <nav class="md:block hidden">
+    <ul class="flex gap-4">
+    <li>
+      <a href="/stack/">Stack</a>
+    </li>
+    <li>
+      <a href="/papers/">Papers</a>
+    </li>
+    <li>
+      <a aria-current="true" class="ancestor" href="/study/">Study</a>
+    </li>
+    <li>
+      <a href="/projects/">Projects</a>
+    </li>
+    </ul>
+  </nav>
+
+  <button id="navButton" class="relative z-12 md:hidden block" aria-label="Toggle menu" aria-expanded="false" aria-controls="menu">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+    </svg>
+  </button>
+
+  <nav class="fixed top-0 md:-right-full! -right-full h-full w-full bg-gray-900/30" id="navMenu" style="transition: all .5s;">
+    <ul class="flex flex-col gap-2 w-[12rem] h-full ml-auto p-6 pt-24 bg-white">
+    <li>
+      <a href="/stack/">Stack</a>
+    </li>
+    <li>
+      <a href="/papers/">Papers</a>
+    </li>
+    <li>
+      <a aria-current="true" class="ancestor" href="/study/">Study</a>
+    </li>
+    <li>
+      <a href="/projects/">Projects</a>
+    </li>
+    </ul>
+  </nav>
+
+  <script>
+    const navButton = document.getElementById('navButton');
+    const navMenu = document.getElementById('navMenu');
+
+    navButton.addEventListener('click', function() {
+      if (navMenu.classList.contains('-right-full')) {
+        navMenu.classList.remove('-right-full');
+        navMenu.classList.add('right-0');
+        navButton.setAttribute('aria-expanded', 'true');
+      } else {
+        navMenu.classList.remove('right-0');
+        navMenu.classList.add('-right-full');
+        navButton.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    navMenu.addEventListener('click', function(e) {
+      if (e.target.tagName !== 'NAV') {
+        return;
+      }
+
+      navMenu.classList.remove('right-0');
+      navMenu.classList.add('-right-full');
+      navButton.setAttribute('aria-expanded', 'false');
+    });
+  </script>
+
+</div>
+
+  </header>
+  <main class="p-8">
+    
+  <article class="container mx-auto max-w-5xl lg:flex lg:gap-12 items-start">
+    <div class="min-w-0 max-w-3xl">
+      <a href="/study/2026-1/" class="text-sm text-gray-500 hover:text-teal-600 mb-3 inline-block">← 2026-1</a>
+      <h1 class="text-3xl font-bold mb-4">Sinkhorn-Knopp Algorithm — 이중확률행렬부터 EPTQ의 L1 스케일 정규화까지</h1>
+
+      
+        <div class="mb-6 p-4 rounded-xl border border-gray-200 bg-gray-50 text-sm space-y-1">
+          <div><strong>Subject</strong> Deep Learning / Optimal Transport</div>
+        </div>
+      
+
+      <div class="mb-6 flex items-center gap-3 md:justify-start justify-end text-sm text-gray-500">
+        
+
+<time class="text-gray-500 text-sm" datetime="2026-08-04T00:00:00&#43;09:00">2026. 8. 4</time>
+
+        <span>·</span>
+        <span>7분 읽기</span>
+      </div>
+
+      
+        <ul class="flex flex-wrap items-center mb-8 gap-x-2 gap-y-2">
+          
+            <li>
+  <a href="/tags/sinkhorn-knopp/" class="tag-chip">Sinkhorn-Knopp</a>
+</li>
+
+          
+            <li>
+  <a href="/tags/optimal-transport/" class="tag-chip">Optimal-Transport</a>
+</li>
+
+          
+            <li>
+  <a href="/tags/quantization/" class="tag-chip">Quantization</a>
+</li>
+
+          
+            <li>
+  <a href="/tags/linear-algebra/" class="tag-chip">Linear-Algebra</a>
+</li>
+
+          
+        </ul>
+      
+
+      <div class="markdown-body mb-10!">
+        <h2 id="오늘-배운-것">오늘 배운 것</h2>
+<p>Sinkhorn-Knopp 알고리즘을 세 층위로 나눠 정리했다.</p>
+<ol>
+<li><strong>고전 버전(1967)</strong>: 임의의 양수 행렬을 doubly stochastic matrix(행/열 합이
+모두 1)로 바꾸는, 행/열 정규화를 번갈아 반복하는 순수한 행렬 균형화 절차.</li>
+<li><strong>최적수송(OT) 버전(Cuturi, 2013)</strong>: 엔트로피 정규화를 더한 최적수송 문제의
+해가 &ldquo;\(\mathrm{diag}(u)\,K\,\mathrm{diag}(v)\)&rdquo; 형태를 갖는다는 걸 보이고,
+그 스케일 벡터 \(u, v\)를 구하는 데 같은 반복 구조를 재사용한 것.</li>
+<li><strong>EPTQ에서의 응용</strong>: 두 버전과 다른 목적(행/열 합=1이 아니라 행/열 L1
+평균의 균일화)으로, 같은 &ldquo;행 정규화 ↔ 열 정규화 교대&rdquo; 구조를 가중치 행렬
+스케일링에 재사용.</li>
+</ol>
+<p>핵심은 세 가지가 전부 **&ldquo;같은 반복 구조를, 다른 목적함수/제약에 적용&rdquo;**한다는
+점이다.</p>
+<h2 id="왜-중요한가-맥락동기">왜 중요한가 (맥락/동기)</h2>
+<p>EPTQ 논문(<code>content/papers/2026-07-eptq-factored-e8-quantization/</code>) 4.2절
+Weight Scale Normalization에서 &ldquo;Sinkhorn-Knopp 알고리즘의 반복 구조를
+재사용한다&quot;는 문장이 나오는데, Sinkhorn-Knopp 자체를 제대로 모르면 이 문장이
+왜 성립하는지(그리고 무엇이 원래 알고리즘과 다른지) 판단할 수 없었다. 이
+논문을 코드 기반으로 재현하려면 Algorithm 1(Iterative Weight Scaling)이
+&ldquo;진짜 Sinkhorn-Knopp&quot;인지, 아니면 이름만 빌린 유사 알고리즘인지 구분하고
+넘어가야 한다.</p>
+<h2 id="핵심-개념-정리">핵심 개념 정리</h2>
+<h3 id="1-고전-sinkhorn-knopp-doubly-stochastic-matrix-scaling">1. 고전 Sinkhorn-Knopp: Doubly Stochastic Matrix Scaling</h3>
+<p>Doubly stochastic matrix란 모든 원소가 0 이상이고, <strong>모든 행의 합과 모든
+열의 합이 각각 1</strong>인 정방행렬이다. 예를 들어 다음 행렬은 doubly stochastic
+이다.</p>
+$$
+P = \begin{bmatrix} 0.3 & 0.7 \\ 0.7 & 0.3 \end{bmatrix}
+$$<p>Sinkhorn-Knopp 정리(1967)는 &ldquo;적절한 조건(비음수, 완전 지지 등)을 만족하는
+양수 행렬 \(A\)는, 대각행렬 \(D_r, D_c\)를 곱해 \(P = D_r A D_c\) 형태로
+doubly stochastic하게 만들 수 있다&quot;는 것을 보장한다. 이 \(D_r, D_c\)를
+찾는 절차가 다음 반복이다.</p>
+<ol>
+<li>각 행의 합이 1이 되도록 행을 정규화한다.</li>
+<li>각 행 정규화 결과에 대해, 각 열의 합이 1이 되도록 열을 정규화한다.</li>
+<li>1~2를 수렴할 때까지 반복한다.</li>
+</ol>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">sinkhorn_knopp</span>(A: np<span style="color:#f92672">.</span>ndarray, n_iter: int <span style="color:#f92672">=</span> <span style="color:#ae81ff">20</span>, eps: float <span style="color:#f92672">=</span> <span style="color:#ae81ff">1e-12</span>) <span style="color:#f92672">-&gt;</span> np<span style="color:#f92672">.</span>ndarray:
+</span></span><span style="display:flex;"><span>    P <span style="color:#f92672">=</span> A<span style="color:#f92672">.</span>copy()<span style="color:#f92672">.</span>astype(float)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(n_iter):
+</span></span><span style="display:flex;"><span>        P <span style="color:#f92672">=</span> P <span style="color:#f92672">/</span> P<span style="color:#f92672">.</span>sum(axis<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, keepdims<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)<span style="color:#f92672">.</span>clip(min<span style="color:#f92672">=</span>eps)  <span style="color:#75715e"># 행 합 = 1</span>
+</span></span><span style="display:flex;"><span>        P <span style="color:#f92672">=</span> P <span style="color:#f92672">/</span> P<span style="color:#f92672">.</span>sum(axis<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, keepdims<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)<span style="color:#f92672">.</span>clip(min<span style="color:#f92672">=</span>eps)  <span style="color:#75715e"># 열 합 = 1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> P
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>행을 정규화하면 열 합이 다시 흐트러지고, 열을 정규화하면 행 합이 다시
+흐트러지지만, 이 두 조작을 번갈아 적용하면 행/열 합이 모두 1로 수렴한다
+(Contraction mapping으로 선형 수렴이 증명되어 있다). 여기까지는 최적수송이나
+엔트로피와 아무 관계가 없는, 순수한 <strong>행렬 균형화(matrix balancing)</strong>
+문제다.</p>
+<h3 id="2-최적수송ot--entropic-regularization-버전-cuturi-2013">2. 최적수송(OT) + Entropic Regularization 버전 (Cuturi, 2013)</h3>
+<p>최적수송 문제는 &ldquo;source 분포 \(r\)의 질량을 target 분포 \(c\)로 옮길 때,
+이동 비용 행렬 \(M\)에 대해 총 비용을 최소화하는 수송계획 \(P\)를 찾는
+문제&quot;다(Wasserstein distance). 이걸 선형계획법(LP)으로 풀면
+\(O(n^3 \log n)\) 이상이 걸려서, 대규모 데이터에는 비현실적이다.</p>
+<p>Cuturi(2013)는 목적함수에 엔트로피 항을 더해 문제를 완화한다.</p>
+$$
+\min_{P} \; \langle P, M \rangle - \lambda H(P)
+$$<p>(\(H(P)\)는 \(P\)의 엔트로피, \(\lambda\)는 정규화 강도.) 엔트로피 항은
+&ldquo;비용은 최소화하되, 수송계획이 지나치게 뾰족(sparse)해지지 않도록&rdquo; 부드러움
+제약을 준다. 라그랑주 승수법으로 이 문제를 풀면 해가 다음 형태를 갖는다는
+것이 핵심 결과다.</p>
+$$
+P = \mathrm{diag}(u)\, K \,\mathrm{diag}(v), \qquad K = e^{-\lambda M}
+$$<p>\(K\)는 Gibbs kernel로, 비용이 싼 위치(\(M\)이 작은 곳)일수록 값이 크다.
+남은 문제는 \(P\)의 행 합이 \(r\), 열 합이 \(c\)가 되도록 스케일 벡터
+\(u, v\)를 찾는 것인데, 이게 정확히 &ldquo;<strong>marginal이 1이 아니라 \(r, c\)로
+일반화된 Sinkhorn-Knopp 문제</strong>&ldquo;다. 그래서 같은 행/열 교대 정규화 구조를
+그대로 적용할 수 있다.</p>
+$$
+u^{(l+1)} = r \oslash (K v^{(l)}), \qquad
+v^{(l+1)} = c \oslash (K^{\top} u^{(l+1)})
+$$<p>(\(\oslash\)는 원소별 나눗셈, \(v^{(0)} = \mathbf{1}\)로 초기화.)</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">sinkhorn_ot</span>(M: np<span style="color:#f92672">.</span>ndarray, r: np<span style="color:#f92672">.</span>ndarray, c: np<span style="color:#f92672">.</span>ndarray,
+</span></span><span style="display:flex;"><span>                 lam: float <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span>, n_iter: int <span style="color:#f92672">=</span> <span style="color:#ae81ff">50</span>, eps: float <span style="color:#f92672">=</span> <span style="color:#ae81ff">1e-12</span>) <span style="color:#f92672">-&gt;</span> np<span style="color:#f92672">.</span>ndarray:
+</span></span><span style="display:flex;"><span>    K <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>exp(<span style="color:#f92672">-</span>lam <span style="color:#f92672">*</span> M)
+</span></span><span style="display:flex;"><span>    v <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>ones_like(c)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(n_iter):
+</span></span><span style="display:flex;"><span>        u <span style="color:#f92672">=</span> r <span style="color:#f92672">/</span> (K <span style="color:#f92672">@</span> v)<span style="color:#f92672">.</span>clip(min<span style="color:#f92672">=</span>eps)
+</span></span><span style="display:flex;"><span>        v <span style="color:#f92672">=</span> c <span style="color:#f92672">/</span> (K<span style="color:#f92672">.</span>T <span style="color:#f92672">@</span> u)<span style="color:#f92672">.</span>clip(min<span style="color:#f92672">=</span>eps)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> np<span style="color:#f92672">.</span>diag(u) <span style="color:#f92672">@</span> K <span style="color:#f92672">@</span> np<span style="color:#f92672">.</span>diag(v)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>r = c = 1_n</code>(모든 marginal이 1)이고 <code>K = A</code>(cost/entropy 변환 없이 원래
+행렬을 그대로 씀)로 두면 이 함수는 위의 <code>sinkhorn_knopp</code>와 동일한 문제로
+퇴화한다. 즉 <strong>고전 버전은 OT 버전의 특수한 경우가 아니라, OT 버전이
+고전 버전을 &ldquo;비용 행렬로부터 유도된 커널&quot;과 &ldquo;임의의 marginal&quot;로 일반화한
+것</strong>이라고 보는 게 인과관계상 정확하다(고전 버전이 1967년으로 더 먼저다).</p>
+<p>실무적으로 이 방식이 유용한 이유:</p>
+<ul>
+<li>행렬-벡터 곱과 원소별 연산만 쓰기 때문에 GPU 병렬화가 쉽고, LP 대비
+\(O(n^2)\) 수준으로 계산량이 줄어든다.</li>
+<li>모든 연산이 미분 가능해서, Wasserstein distance 자체를 신경망의 손실
+함수로 사용할 수 있다(SwAV, SuperGlue 등에서 실제로 사용).</li>
+<li>\(\lambda\)가 커지면 \(K\)의 값이 0에 가까워져 수치적으로 불안정해지는데,
+이는 log-domain 계산으로 완화한다.</li>
+</ul>
+<h3 id="3-eptq-algorithm-1-같은-구조-다른-목적">3. EPTQ Algorithm 1: 같은 구조, 다른 목적</h3>
+<p>EPTQ 논문 4.2절은 가중치 행렬 \(W\)를 다음처럼 분해한다.</p>
+$$
+W = W' \odot (g h^{\top})
+$$<p>목표는 \(W'\)의 모든 행/열의 <strong>L1 노름(평균 절댓값)이 1(unity)로 수렴</strong>하도록
+\(g\)(행 스케일), \(h\)(열 스케일)를 찾는 것이다(논문 원문: &ldquo;the mean
+absolute value of every row and column in \(W'\) converges to unity&rdquo;). 즉
+고전 Sinkhorn-Knopp이 &ldquo;행/열 <strong>합</strong>이 1&quot;을 목표로 하듯, EPTQ는 &ldquo;행/열
+<strong>평균 절댓값</strong>이 1&quot;을 목표로 한다 — 기준이 합에서 평균으로 바뀐 것이지,
+목표 상수 자체를 고정하지 않는 것은 아니다. 논문은 이 문제가 &ldquo;절댓값 행렬
+\(|W|\)에 대해 doubly stochastic matrix를 구하는 문제와 수학적으로 동치&quot;라고
+말하고, Sinkhorn-Knopp의 반복 구조를 그대로 재사용한다.</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> torch
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">iterative_weight_scaling</span>(W: torch<span style="color:#f92672">.</span>Tensor, n_iter: int <span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>, eps: float <span style="color:#f92672">=</span> <span style="color:#ae81ff">1e-8</span>):
+</span></span><span style="display:flex;"><span>    d_row, d_col <span style="color:#f92672">=</span> W<span style="color:#f92672">.</span>shape
+</span></span><span style="display:flex;"><span>    g <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>ones(d_row)
+</span></span><span style="display:flex;"><span>    h <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>ones(d_col)
+</span></span><span style="display:flex;"><span>    W_abs <span style="color:#f92672">=</span> W<span style="color:#f92672">.</span>abs()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(n_iter):
+</span></span><span style="display:flex;"><span>        g <span style="color:#f92672">=</span> (W_abs <span style="color:#f92672">/</span> h<span style="color:#f92672">.</span>clamp_min(eps))<span style="color:#f92672">.</span>sum(dim<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">/</span> d_col   <span style="color:#75715e"># 행 정규화</span>
+</span></span><span style="display:flex;"><span>        h <span style="color:#f92672">=</span> (W_abs<span style="color:#f92672">.</span>T <span style="color:#f92672">/</span> g<span style="color:#f92672">.</span>clamp_min(eps))<span style="color:#f92672">.</span>sum(dim<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">/</span> d_row  <span style="color:#75715e"># 열 정규화</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    W_prime <span style="color:#f92672">=</span> W <span style="color:#f92672">/</span> (g<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">1</span>) <span style="color:#f92672">*</span> h<span style="color:#f92672">.</span>unsqueeze(<span style="color:#ae81ff">0</span>))<span style="color:#f92672">.</span>clamp_min(eps)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> W_prime, g, h
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>(위 코드는 이 블로그의 EPTQ 논문 노트에서 이미 텍스트만 보고 비공식으로
+재구성해둔 것과 동일하며, 공식 구현이 아니다.)</p>
+<p>세 버전을 나란히 놓고 비교하면 무엇이 같고 다른지가 뚜렷해진다.</p>
+<table>
+	<thead>
+			<tr>
+					<th></th>
+					<th>고전 Sinkhorn-Knopp (1967)</th>
+					<th>OT/entropic (Cuturi, 2013)</th>
+					<th>EPTQ Algorithm 1</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>대상 행렬</td>
+					<td>임의의 양수 행렬 \(A\)</td>
+					<td>비용행렬에서 유도한 Gibbs kernel \(K = e^{-\lambda M}\)</td>
+					<td>가중치의 절댓값 행렬 \(\lvert W \rvert\)</td>
+			</tr>
+			<tr>
+					<td>정규화 기준</td>
+					<td>행/열의 <strong>합(sum)</strong></td>
+					<td>행/열의 <strong>합</strong>, 단 목표값이 \(r, c\)로 일반화</td>
+					<td>행/열의 <strong>L1 평균(mean)</strong></td>
+			</tr>
+			<tr>
+					<td>목표 상수</td>
+					<td>1 (행/열 <strong>합</strong>)</td>
+					<td>\(r, c\) (지정된 marginal 분포)</td>
+					<td>1 (행/열 <strong>평균</strong> 절댓값, unity)</td>
+			</tr>
+			<tr>
+					<td>엔트로피 정규화</td>
+					<td>없음</td>
+					<td>있음 (\(\lambda H(P)\))</td>
+					<td>없음</td>
+			</tr>
+			<tr>
+					<td>풀려는 문제</td>
+					<td>행렬 균형화 그 자체</td>
+					<td>최적수송(Wasserstein distance) 근사</td>
+					<td>양자화 전 가중치 분산 불균형 제거</td>
+			</tr>
+			<tr>
+					<td>수렴 속도</td>
+					<td>선형 수렴</td>
+					<td>선형 수렴 (contraction mapping)</td>
+					<td>논문 보고: 보통 5회 미만</td>
+			</tr>
+	</tbody>
+</table>
+<p>정리하면, EPTQ는 OT나 entropic regularization과는 무관하고, <strong>행 정규화
+↔ 열 정규화를 번갈아 반복한다는 Sinkhorn-Knopp의 알고리즘적 골격만 빌려서
+&ldquo;행/열 합=1&quot;이 아니라 &ldquo;행/열 평균 절댓값=1&quot;이라는, 기준만 다른 제약에
+적용</strong>한 것이다. 논문이 &ldquo;Sinkhorn-Knopp 알고리즘을 (재)적용한다&quot;고 쓴 건
+이런 의미다.</p>
+<h2 id="헷갈렸던-부분--다시-볼-것">헷갈렸던 부분 / 다시 볼 것</h2>
+<ul>
+<li>처음에는 EPTQ가 Cuturi의 OT 버전(엔트로피 정규화, cost matrix)을 그대로
+쓰는 줄 알았는데, 실제로는 cost matrix나 entropy 항이 전혀 등장하지
+않는다. <strong>&ldquo;Sinkhorn-Knopp&quot;이라는 이름이 가리키는 건 목적함수가 아니라
+&lsquo;행/열 교대 정규화 반복&rsquo;이라는 알고리즘 구조 자체</strong>라는 걸 명확히 할 것.</li>
+<li><code>iterative_weight_scaling</code>의 업데이트가 <code>sum</code>이 아니라 <code>sum(...)/d_col</code>
+(즉 평균)인 이유: 목표 상수 자체는 고전 버전과 마찬가지로 1로 고정되어
+있지만(unity로 수렴), 정규화 기준이 &ldquo;합&quot;이 아니라 &ldquo;평균&quot;이라서 나눠주는
+분모가 원소 개수(<code>d_col</code>, <code>d_row</code>)로 바뀐 것뿐이다. 처음에는 이걸 &ldquo;목표
+상수가 없는 상대적 균일화&quot;로 오해했었는데, 논문 원문(&ldquo;converges to
+unity&rdquo;)을 다시 보고 정정함. 다음에 실제로 두 버전을 같은 입력으로 돌려서
+고정점(fixed point)이 어떻게 다른지 수치로 비교해볼 것.</li>
+<li>\((g, h)\)의 유일성: \(g h^{\top}\)이 의미 있는 값이지 \(g, h\) 개별
+값은 \((cg, h/c)\) 형태의 scalar 자유도를 갖는다는 점을 짚고 넘어갈 것
+(아래 확인 질문 3번).</li>
+</ul>
+<h2 id="확인-질문">확인 질문</h2>
+<details>
+<summary>고전 Sinkhorn-Knopp(1967)과 Cuturi의 OT 버전(2013)은 정확히 뭐가 다른가?</summary>
+<p>알고리즘의 반복 구조(행 정규화 ↔ 열 정규화 교대)는 동일하다. 차이는 <strong>무엇에
+적용하고 무엇을 목표로 하는가</strong>다. 고전 버전은 주어진 양수 행렬 자체를
+직접 정규화해서 행/열 합이 1인 doubly stochastic matrix를 만드는 것이
+목적이다. Cuturi의 OT 버전은 최적수송 문제에 엔트로피 정규화 항을 추가한
+뒤, 그 해가 \(\mathrm{diag}(u) K \mathrm{diag}(v)\) 형태(\(K\)는 비용
+행렬에서 유도된 Gibbs kernel)를 갖는다는 걸 증명하고, 그 스케일 벡터
+\(u, v\)를 구하는 데 같은 반복 구조를 재사용한 것이다. 즉 고전 버전은
+&ldquo;행렬을 대상으로 한 목적 자체&quot;이고, OT 버전은 &ldquo;최적수송 문제를 풀기 위한
+도구로 재사용&quot;한 것이라는 관계다.</p>
+</details>
+<details>
+<summary>EPTQ에서 L2가 아니라 L1 노름을 정규화 기준으로 쓰는 이유는 Sinkhorn-Knopp와 무슨 관계가 있나?</summary>
+<p>Sinkhorn-Knopp 자체는 &ldquo;행 정규화 ↔ 열 정규화 반복&quot;이라는 구조일 뿐, 정규화
+기준이 합이든 L1이든 L2든 상관없이 적용 가능한 뼈대다. EPTQ는 이 뼈대를
+절댓값 행렬의 L1 평균에 적용했는데, 만약 L2를 썼다면 소수의 매우 큰
+outlier 가중치가 스케일 계산 자체를 왜곡했을 것이다. EPTQ에서는 outlier
+가중치를 스케일 정규화가 아니라 별도 메커니즘(Adaptive Critical Weight
+Preservation)이 처리하도록 역할을 분리해뒀기 때문에, 정규화 자체는
+outlier에 덜 민감한 L1을 쓰는 것이 설계 의도에 맞다.</p>
+</details>
+<details>
+<summary>Iterative Weight Scaling이 수렴하면 g, h는 유일하게 결정되는가?</summary>
+<p>아니다. 최종적으로 의미 있는 값은 \(g h^{\top}\)(각 원소의 곱)이지 \(g\),
+\(h\) 개별 벡터가 아니다. 임의의 스칼라 \(c\)에 대해 \((cg,\, h/c)\)도
+똑같은 \(g h^{\top}\)를 만들어내므로 개별 벡터에는 scalar 자유도가
+남는다. Doubly stochastic scaling 문제 일반에서 스케일링 대각행렬 쌍이
+유일하지 않고 이런 자유도를 갖는 것과 같은 현상이다.</p>
+</details>
+<h2 id="참고-자료">참고 자료</h2>
+<ul>
+<li>whale-yoon, <a href="https://whale-yoon.tistory.com/10" target="_blank">&ldquo;Sinkhorn-Knopp 알고리즘 정리&rdquo;</a>
+</li>
+<li>happy-rl-study, <a href="https://happy-rl-study.tistory.com/entry/Sinkhorn-Knopp-Algorithm-%EC%B5%9C%EC%A0%81-%EC%88%98%EC%86%A1%EC%9D%98-%EA%B3%A0%EC%86%8D%EB%8F%84%EB%A1%9C%EB%A5%BC-%EB%9A%AB%EB%8B%A4" target="_blank">&ldquo;Sinkhorn-Knopp Algorithm: 최적 수송의 고속도로를 뚫다&rdquo;</a>
+</li>
+<li>Richard Sinkhorn, Paul Knopp. &ldquo;Concerning Nonnegative Matrices and Doubly
+Stochastic Matrices.&rdquo; Pacific J. Math. 21(2), 1967.</li>
+<li>Marco Cuturi. &ldquo;Sinkhorn Distances: Lightspeed Computation of Optimal
+Transport.&rdquo; NeurIPS 2013.</li>
+<li>이 블로그, <a href="/papers/2026-07-eptq-factored-e8-quantization/">EPTQ: Fast and Accurate 2-bit Post-Training Quantization via
+Factored \(E_8\) Lattice</a>
+ —
+4.2절 Weight Scale Normalization에서 Sinkhorn-Knopp 재사용 부분.</li>
+</ul>
+
+      </div>
+    </div>
+
+    
+  <aside class="hidden lg:block sticky top-24 self-start shrink-0 w-[220px]">
+    <div class="text-xs font-bold tracking-wide uppercase text-gray-400 mb-3">On this page</div>
+    <div class="toc-nav"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#오늘-배운-것">오늘 배운 것</a></li>
+    <li><a href="#왜-중요한가-맥락동기">왜 중요한가 (맥락/동기)</a></li>
+    <li><a href="#핵심-개념-정리">핵심 개념 정리</a>
+      <ul>
+        <li><a href="#1-고전-sinkhorn-knopp-doubly-stochastic-matrix-scaling">1. 고전 Sinkhorn-Knopp: Doubly Stochastic Matrix Scaling</a></li>
+        <li><a href="#2-최적수송ot--entropic-regularization-버전-cuturi-2013">2. 최적수송(OT) + Entropic Regularization 버전 (Cuturi, 2013)</a></li>
+        <li><a href="#3-eptq-algorithm-1-같은-구조-다른-목적">3. EPTQ Algorithm 1: 같은 구조, 다른 목적</a></li>
+      </ul>
+    </li>
+    <li><a href="#헷갈렸던-부분--다시-볼-것">헷갈렸던 부분 / 다시 볼 것</a></li>
+    <li><a href="#확인-질문">확인 질문</a></li>
+    <li><a href="#참고-자료">참고 자료</a></li>
+  </ul>
+</nav></div>
+  </aside>
+
+  </article>
+
+  </main>
+  <footer class="py-6 px-8 bg-white border-t border-t-gray-200">
+    <div
+  class="container m-auto flex md:flex-row flex-col items-center justify-between gap-2 text-gray-400 md:text-base text-sm"
+>
+  <p>&copy; 2026 minnnje.</p>
+  
+  <a
+    href="https://github.com/minnnje"
+    class="underline hover:text-gray-600"
+    target="_blank"
+    rel="noopener"
+    >GitHub</a
+  >
+  
+</div>
+
+  </footer>
+</body>
+</html>

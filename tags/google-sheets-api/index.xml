@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Google-Sheets-Api on minnnje | Blog</title>
+		<link>http://localhost:1313/tags/google-sheets-api/</link>
+		<description>Recent content in Google-Sheets-Api on minnnje | Blog</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Sun, 02 Aug 2026 02:23:53 +0900</lastBuildDate>
+		
+			<atom:link href="http://localhost:1313/tags/google-sheets-api/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>알바 출퇴근 자동 기록 웹앱</title>
+				<link>http://localhost:1313/projects/part-time-attendance-app/</link>
+				<pubDate>Sun, 02 Aug 2026 02:23:53 +0900</pubDate>
+				<guid>http://localhost:1313/projects/part-time-attendance-app/</guid>
+				<description>&lt;h2 id=&#34;무엇을-만들었나&#34;&gt;무엇을 만들었나&lt;/h2&gt;&#xA;&lt;p&gt;아르바이트생이 출근·퇴근 시 사진을 찍고 &amp;ldquo;출근&amp;rdquo;/&amp;ldquo;퇴근&amp;rdquo; 버튼만 누르면, 서버 시간 기준으로 시간과 사진이 자동 기록되는 웹앱. 최종 산출물은 매일매일 쌓이는 구글시트 출퇴근 기록부이고, 사장님은 별도 관리자 화면 없이 공유받은 시트를 열어보는 것만으로 누가 언제 출퇴근했는지 확인한다.&lt;/p&gt;&#xA;&lt;p&gt;현재 상태: 설계는 확정했고 구글 클라우드(서비스 계정, Sheets API, Drive API) 연동 설정까지 마쳤다. 프론트엔드/백엔드 코드 구현은 아직 착수 전.&lt;/p&gt;&#xA;&lt;h2 id=&#34;왜-만들었나-동기문제의식&#34;&gt;왜 만들었나 (동기/문제의식)&lt;/h2&gt;&#xA;&lt;p&gt;원래는 매장 카카오톡 단체방으로 출퇴근 시각과 사진을 보고받고 있었는데, 카카오는 일반 그룹채팅방 메시지를 읽어오는 공식 API를 제공하지 않는다. 비공식 크롤링/매크로는 약관 위반 및 계정 정지 리스크가 있어 배제하고, 입력 경로만 자체 웹앱으로 옮기기로 했다. 카톡방에는 체크인 페이지 링크만 고정 공유한다.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

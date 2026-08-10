@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Kneedle on minnnje | Blog</title>
+		<link>http://localhost:1313/tags/kneedle/</link>
+		<description>Recent content in Kneedle on minnnje | Blog</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Tue, 04 Aug 2026 00:00:00 +0900</lastBuildDate>
+		
+			<atom:link href="http://localhost:1313/tags/kneedle/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Kneedle Algorithm</title>
+				<link>http://localhost:1313/study/algorithm/kneedle-algorithm/</link>
+				<pubDate>Tue, 04 Aug 2026 00:00:00 +0900</pubDate>
+				<guid>http://localhost:1313/study/algorithm/kneedle-algorithm/</guid>
+				<description>&lt;h2 id=&#34;오늘-배운-것&#34;&gt;오늘 배운 것&lt;/h2&gt;&#xA;&lt;p&gt;Knee(꺾이는 지점)를 &amp;ldquo;감으로 정하는 것&amp;quot;이 아니라 &lt;strong&gt;곡률(curvature)의 수학적&#xA;정의&lt;/strong&gt;로 formalize하고, 곡률이 정의되지 않는 이산(discrete) 데이터에서 이를&#xA;근사하는 6단계 알고리즘(Kneedle)을 정리했다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;핵심-개념-정리&#34;&gt;핵심 개념 정리&lt;/h2&gt;&#xA;&lt;h3 id=&#34;1-knee의-수학적-정의-곡률curvature&#34;&gt;1. Knee의 수학적 정의: 곡률(Curvature)&lt;/h3&gt;&#xA;&lt;p&gt;논문이 지적하는 문제는, &amp;ldquo;knee/elbow&amp;quot;라는 개념이 널리 쓰이는데도 &lt;strong&gt;합의된&#xA;정의가 없었다&lt;/strong&gt;는 것이다. 대부분의 연구는 knee를 비용-편익 분석의 대용품으로&#xA;암묵적으로 쓸 뿐, 정확히 무엇을 &amp;ldquo;knee&amp;quot;라고 부르는지 명시하지 않는다. 논문은&#xA;연속함수 \(f\)에 대해 이미 잘 정의되어 있는 &lt;strong&gt;곡률&lt;/strong&gt;을 knee의 정의로 채택한다.&lt;/p&gt;&#xA;$$&#xA;K_f(x) = \frac{f&#39;&#39;(x)}{(1 + f&#39;(x)^2)^{1.5}}&#xA;$$&lt;p&gt;Knee는 이 곡률 \(K_f(x)\)가 최대가 되는 점이다. 이 정의가 좋은 이유는 (i) 시스템/파라미터에 종속되지 않고(application-independent), (ii) 사람이 직접 임계값을 정할 필요가 없다는 점이다.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

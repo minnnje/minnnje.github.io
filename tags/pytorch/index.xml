@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Pytorch on minnnje | Blog</title>
+		<link>http://localhost:1313/tags/pytorch/</link>
+		<description>Recent content in Pytorch on minnnje | Blog</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Sun, 26 Jul 2026 00:00:00 +0900</lastBuildDate>
+		
+			<atom:link href="http://localhost:1313/tags/pytorch/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Example: LLM Quant Toy Project</title>
+				<link>http://localhost:1313/projects/example-llm-quant-toy/</link>
+				<pubDate>Sun, 26 Jul 2026 00:00:00 +0900</pubDate>
+				<guid>http://localhost:1313/projects/example-llm-quant-toy/</guid>
+				<description>&lt;h2 id=&#34;무엇을-만들었나&#34;&gt;무엇을 만들었나&lt;/h2&gt;&#xA;&lt;p&gt;간단한 INT4 weight quantization 파이프라인 (예시 콘텐츠).ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss&lt;/p&gt;&#xA;&lt;h2 id=&#34;왜-만들었나-동기문제의식&#34;&gt;왜 만들었나 (동기/문제의식)&lt;/h2&gt;&#xA;&lt;p&gt;논문에서 본 PTQ 기법을 직접 구현하며 이해하기 위해.&lt;/p&gt;&#xA;&lt;h2 id=&#34;어떻게-만들었나-아키텍처설계-결정&#34;&gt;어떻게 만들었나 (아키텍처/설계 결정)&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&amp;hellip;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;배운-점--어려웠던-점&#34;&gt;배운 점 / 어려웠던 점&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&amp;hellip;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;다음-개선-방향&#34;&gt;다음 개선 방향&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;GPTQ 방식 적용 비교&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
+			</item>
+	</channel>
+</rss>

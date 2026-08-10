@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ko-KR" dir="ltr">
+<head>
+	<meta name="generator" content="Hugo 0.164.0"><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="http://localhost:1313/favicon.ico">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+
+<title>
+  
+    minnnje | Blog
+  
+</title>
+
+
+  
+  
+  
+    
+      <link rel="stylesheet" href="/css/main.css">
+    
+  
+
+
+  
+  
+  
+    
+      <link rel="stylesheet" href="/css/paginate.css">
+    
+  
+
+
+
+
+
+      <script src="/js/main.js" defer></script>
+
+
+
+<meta property="og:url" content="http://localhost:1313/">
+	<meta property="og:site_name" content="minnnje | Blog">
+	<meta property="og:title" content="Home">
+	<meta property="og:description" content="안녕하세요, 선민제의 기술 블로그입니다.">
+	<meta property="og:locale" content="ko_KR">
+	<meta property="og:type" content="website">
+
+
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:title" content="Home">
+	<meta name="twitter:description" content="안녕하세요, 선민제의 기술 블로그입니다.">
+
+
+	<meta itemprop="name" content="Home">
+	<meta itemprop="description" content="안녕하세요, 선민제의 기술 블로그입니다.">
+	<meta itemprop="datePublished" content="2026-08-04T00:00:00+09:00">
+	<meta itemprop="dateModified" content="2026-08-04T00:00:00+09:00">
+
+<link rel="canonical" href="http://localhost:1313/" /><meta name="description" content="안녕하세요, 선민제의 기술 블로그입니다." />
+
+  
+
+
+  
+    <link rel="prev" href="http://localhost:1313/" />
+  
+  
+
+
+
+  
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
+  MathJax = {
+    tex: {
+      displayMath: [['\\[', '\\]'], ['$$', '$$']],  
+      inlineMath: [['\\(', '\\)']]                  
+    },
+    loader:{
+      load: ['ui/safe']
+    },
+  };
+</script>
+
+  
+
+  
+</head>
+<body class="bg-white text-gray-900">
+  <header class="sticky top-0 z-50 py-6 px-8 bg-white shadow-md">
+    <div class="container m-auto flex items-center justify-between">
+  <h1>
+    <a href="/" class="flex items-center gap-2 text-xl font-bold">
+      
+        minnnje | Blog
+      
+    </a>
+  </h1>
+  
+  <nav class="md:block hidden">
+    <ul class="flex gap-4">
+    <li>
+      <a href="/study/">Study</a>
+    </li>
+    <li>
+      <a href="/papers/">Papers</a>
+    </li>
+    <li>
+      <a href="/projects/">Projects</a>
+    </li>
+    <li>
+      <a href="/stack/">Stack</a>
+    </li>
+    </ul>
+  </nav>
+
+  <button id="navButton" class="relative z-12 md:hidden block" aria-label="Toggle menu" aria-expanded="false" aria-controls="menu">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+    </svg>
+  </button>
+
+  <nav class="fixed top-0 md:-right-full! -right-full h-full w-full bg-gray-900/30" id="navMenu" style="transition: all .5s;">
+    <ul class="flex flex-col gap-2 w-[12rem] h-full ml-auto p-6 pt-24 bg-white">
+    <li>
+      <a href="/study/">Study</a>
+    </li>
+    <li>
+      <a href="/papers/">Papers</a>
+    </li>
+    <li>
+      <a href="/projects/">Projects</a>
+    </li>
+    <li>
+      <a href="/stack/">Stack</a>
+    </li>
+    </ul>
+  </nav>
+
+  <script>
+    const navButton = document.getElementById('navButton');
+    const navMenu = document.getElementById('navMenu');
+
+    navButton.addEventListener('click', function() {
+      if (navMenu.classList.contains('-right-full')) {
+        navMenu.classList.remove('-right-full');
+        navMenu.classList.add('right-0');
+        navButton.setAttribute('aria-expanded', 'true');
+      } else {
+        navMenu.classList.remove('right-0');
+        navMenu.classList.add('-right-full');
+        navButton.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    navMenu.addEventListener('click', function(e) {
+      if (e.target.tagName !== 'NAV') {
+        return;
+      }
+
+      navMenu.classList.remove('right-0');
+      navMenu.classList.add('-right-full');
+      navButton.setAttribute('aria-expanded', 'false');
+    });
+  </script>
+
+</div>
+
+  </header>
+  <main class="p-8">
+    
+  <div class="container mx-auto max-w-4xl">
+    <p class="text-gray-600 text-sm md:text-base mb-10 px-1">안녕하세요, 선민제의 기술 블로그입니다.</p>
+
+    
+    <section class="mb-14">
+      <div class="flex items-center gap-3 mb-3 px-1">
+        <h2 class="text-2xl font-bold">Tags</h2>
+        <a href="/tags/" class="text-sm text-gray-500 hover:text-teal-600">
+          전체 보기 →
+        </a>
+      </div>
+      <div class="flex flex-wrap gap-2 px-1">
+          <a href="/tags/llm-compression/" class="tag-chip">Llm-Compression</a>
+          <a href="/tags/quantization/" class="tag-chip">Quantization</a>
+          <a href="/tags/transformer/" class="tag-chip">Transformer</a>
+          <a href="/tags/attention/" class="tag-chip">Attention</a>
+          <a href="/tags/cuda/" class="tag-chip">Cuda</a>
+          <a href="/tags/curvature/" class="tag-chip">Curvature</a>
+          <a href="/tags/deep-learning/" class="tag-chip">Deep-Learning</a>
+          <a href="/tags/fastapi/" class="tag-chip">Fastapi</a>
+          <a href="/tags/google-drive-api/" class="tag-chip">Google-Drive-Api</a>
+          <a href="/tags/google-sheets-api/" class="tag-chip">Google-Sheets-Api</a>
+          <a href="/tags/gpu/" class="tag-chip">Gpu</a>
+          <a href="/tags/gpu-optimization/" class="tag-chip">Gpu-Optimization</a>
+          <a href="/tags/knee-point-detection/" class="tag-chip">Knee-Point-Detection</a>
+          <a href="/tags/kneedle/" class="tag-chip">Kneedle</a>
+      </div>
+    </section>
+
+
+    
+<section class="mb-20">
+  <h2 class="text-2xl font-bold mb-1 px-1 text-center">최근 게시물</h2>
+  <p class="text-sm text-gray-500 px-1 mb-8 text-center">
+    최근에 읽고 정리한 논문과 스터디 노트입니다.
+  </p>
+  <div class="featured-carousel">
+    <a
+      href="/study/algorithm/kneedle-algorithm/"
+      class="featured-card fc-grad-0"
+    >
+      <span class="fc-badge">Study</span>
+      <div>
+        <div class="fc-title">Kneedle Algorithm</div>
+        <div class="fc-excerpt">오늘 배운 것 Knee(꺾이는 지점)를 &amp;ldquo;감으로 정하는 것&amp;quot;이 아니라 곡률(curvature)의 수학적 정의로 formalize하고, 곡률이 …</div>
+        <div class="fc-date">2026-08-04</div>
+      </div>
+    </a>
+    <a
+      href="/study/algorithm/sinkhorn-knopp-algorithm/"
+      class="featured-card fc-grad-1"
+    >
+      <span class="fc-badge">Study</span>
+      <div>
+        <div class="fc-title">Sinkhorn-Knopp Algorithm</div>
+        <div class="fc-excerpt">오늘 배운 것 Sinkhorn-Knopp 알고리즘을 세 층위로 나눠 정리했다.
+고전 버전(1967): 임의의 양수 행렬을 doubly stochastic …</div>
+        <div class="fc-date">2026-08-02</div>
+      </div>
+    </a>
+    <a
+      href="/papers/2026-07-eptq-factored-e8-quantization/"
+      class="featured-card fc-grad-2"
+    >
+      <span class="fc-badge">Paper</span>
+      <div>
+        <div class="fc-title">EPTQ: Fast and Accurate 2-bit Post-Training Quantization via Factored E8 Lattice</div>
+        <div class="fc-excerpt">1. 한줄 요약 \(E_8\) 격자 코드북을 손실 없이 4KB로 재구성한 Factored-\(E_8\)(FE8)에, Sinkhorn-Knopp 기반 행/열 스케일 …</div>
+        <div class="fc-date">2026-07-30</div>
+      </div>
+    </a>
+    <a
+      href="/papers/2026-07-example-quantization-survey/"
+      class="featured-card fc-grad-3"
+    >
+      <span class="fc-badge">Paper</span>
+      <div>
+        <div class="fc-title">Example: A Survey of Post-Training Quantization</div>
+        <div class="fc-excerpt">한 줄 요약 PTQ(Post-Training Quantization)의 주요 접근법들을 정리한 예시 문서입니다. 실제 논문 대신 레이아웃/수식/코드 렌더링 테스트 …</div>
+        <div class="fc-date">2026-07-26</div>
+      </div>
+    </a>
+    <a
+      href="/study/systems/os-example/"
+      class="featured-card fc-grad-4"
+    >
+      <span class="fc-badge">Study</span>
+      <div>
+        <div class="fc-title">Example: Virtual Memory 정리</div>
+        <div class="fc-excerpt">오늘 배운 것 페이지 테이블과 TLB의 동작 원리 (예시 콘텐츠).
+왜 중요한가 (맥락/동기) GPU 메모리 관리나 모델 서빙 시 메모리 페이징 개념과 연결되는 …</div>
+        <div class="fc-date">2026-07-26</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+
+    
+    <section class="mb-20">
+      <h2 class="text-2xl font-bold mb-1 px-1">Stack</h2>
+      <p class="text-sm text-gray-500 px-1 mb-3">현재 다루고 있는 기술 스택입니다.</p>
+      <div class="flex flex-wrap gap-2 px-1">
+          <span class="stack-chip">Python</span>
+          <span class="stack-chip">PyTorch</span>
+          <span class="stack-chip">CUDA</span>
+          <span class="stack-chip">LLM Inference</span>
+          <span class="stack-chip">FastAPI</span>
+          <span class="stack-chip">Docker</span>
+          <span class="stack-chip">AWS</span>
+        <a href="/stack/" class="stack-chip stack-chip-link">전체 보기 →</a>
+      </div>
+    </section>
+
+
+    
+      <section class="mb-16">
+        <h2 class="text-2xl font-bold mb-4 px-1">
+          <a href="/projects/" class="hover:underline">Projects</a>
+        </h2>
+        <ul class="space-y-3 px-1">
+          
+            <li class="flex items-baseline gap-3">
+              <span class="text-gray-400 text-sm shrink-0">2026-08-02</span>
+              <a href="/projects/part-time-attendance-app/" class="hover:underline">알바 출퇴근 자동 기록 웹앱</a>
+            </li>
+          
+            <li class="flex items-baseline gap-3">
+              <span class="text-gray-400 text-sm shrink-0">2026-07-26</span>
+              <a href="/projects/example-llm-quant-toy/" class="hover:underline">Example: LLM Quant Toy Project</a>
+            </li>
+          
+        </ul>
+      </section>
+    
+  </div>
+
+  </main>
+  <footer class="py-6 px-8 bg-white border-t border-t-gray-200">
+    <div
+  class="container m-auto flex md:flex-row flex-col items-center justify-between gap-2 text-gray-400 md:text-base text-sm"
+>
+  <p>&copy; 2026 minnnje.</p>
+  
+  <a
+    href="https://github.com/minnnje"
+    class="underline hover:text-gray-600"
+    target="_blank"
+    rel="noopener"
+    >GitHub</a
+  >
+  
+</div>
+
+  </footer>
+</body>
+</html>

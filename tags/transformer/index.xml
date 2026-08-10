@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Transformer on minnnje | Blog</title>
+		<link>http://localhost:1313/tags/transformer/</link>
+		<description>Recent content in Transformer on minnnje | Blog</description>
+		<generator>Hugo</generator>
+		<language>ko-KR</language>
+		
+		
+		
+		
+			<lastBuildDate>Wed, 22 Jul 2026 00:00:00 +0900</lastBuildDate>
+		
+			<atom:link href="http://localhost:1313/tags/transformer/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Example: Transformer Attention 메커니즘 복습</title>
+				<link>http://localhost:1313/study/ai/attention-mechanism-example/</link>
+				<pubDate>Wed, 22 Jul 2026 00:00:00 +0900</pubDate>
+				<guid>http://localhost:1313/study/ai/attention-mechanism-example/</guid>
+				<description>&lt;h2 id=&#34;오늘-배운-것&#34;&gt;오늘 배운 것&lt;/h2&gt;&#xA;&lt;p&gt;Scaled dot-product attention의 수식과, 스케일링 \(\sqrt{d_k}\)이 왜 필요한지&#xA;(예시 콘텐츠).&lt;/p&gt;&#xA;&lt;h2 id=&#34;왜-중요한가-맥락동기&#34;&gt;왜 중요한가 (맥락/동기)&lt;/h2&gt;&#xA;&lt;p&gt;Quantization/pruning 논문들이 대부분 attention block을 대상으로 하기 때문에,&#xA;attention 연산 자체를 정확히 알아야 어느 부분을 압축하는지 이해할 수 있음.&lt;/p&gt;&#xA;&lt;h2 id=&#34;핵심-개념-정리&#34;&gt;핵심 개념 정리&lt;/h2&gt;&#xA;&lt;p&gt;Query, Key, Value에 대해 다음과 같이 계산합니다.&lt;/p&gt;&#xA;$$&#xA;\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^{\top}}{\sqrt{d_k}}\right)V&#xA;$$&lt;ul&gt;&#xA;&lt;li&gt;\(d_k\)가 커질수록 \(QK^{\top}\)의 분산이 커져 softmax가 saturate되기 쉬움&lt;/li&gt;&#xA;&lt;li&gt;\(\sqrt{d_k}\)로 나눠 분산을 일정하게 유지&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;헷갈렸던-부분--다시-볼-것&#34;&gt;헷갈렸던 부분 / 다시 볼 것&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Multi-head attention에서 head마다 파라미터를 따로 갖는 이유를 표현력 관점에서&#xA;다시 정리할 것&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;확인-질문&#34;&gt;확인 질문&lt;/h2&gt;&#xA;&lt;details&gt;&#xA;&lt;summary&gt;Attention score를 스케일링하지 않으면 어떤 문제가 생기나?&lt;/summary&gt;&#xA;&lt;p&gt;내적 값의 분산이 \(d_k\)에 비례해 커지면서 softmax 입력값이 극단적으로 커지고,&#xA;결과적으로 gradient가 거의 0에 가까워지는 saturation이 발생해 학습이 잘 안 된다.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>Example: Structured Pruning for Transformer Inference</title>
+				<link>http://localhost:1313/papers/2026-07-example-structured-pruning/</link>
+				<pubDate>Wed, 15 Jul 2026 00:00:00 +0900</pubDate>
+				<guid>http://localhost:1313/papers/2026-07-example-structured-pruning/</guid>
+				<description>&lt;h2 id=&#34;한-줄-요약&#34;&gt;한 줄 요약&lt;/h2&gt;&#xA;&lt;p&gt;Attention head와 FFN 뉴런 단위로 구조적 가지치기(structured pruning)를 적용해&#xA;추론 속도를 높이는 기법을 정리한 예시 문서입니다. 카드 레이아웃 테스트용 더미 콘텐츠입니다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;읽기-순서&#34;&gt;읽기 순서&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;문제: unstructured pruning은 sparse 연산 가속이 어려워 실제 속도 이득이 작음&lt;/li&gt;&#xA;&lt;li&gt;방법: head/뉴런 단위로 통째로 제거해 dense 연산 그대로 유지&lt;/li&gt;&#xA;&lt;li&gt;결과: 파라미터 30% 감소, 지연시간 25% 개선&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;문제-정의-problem&#34;&gt;문제 정의 (Problem)&lt;/h2&gt;&#xA;&lt;p&gt;개별 가중치를 0으로 만드는 unstructured pruning은 이론상 파라미터 수를 크게 줄여도,&#xA;GPU에서 sparse matmul을 효율적으로 가속하기 어려워 실제 속도 향상으로 이어지지 않는&#xA;경우가 많습니다.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

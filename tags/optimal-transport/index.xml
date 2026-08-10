@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Optimal-Transport on minnnje | Blog</title><link>https://minnnje.github.io/tags/optimal-transport/</link><description>Recent content in Optimal-Transport on minnnje | Blog</description><generator>Hugo</generator><language>ko-KR</language><lastBuildDate>Sun, 02 Aug 2026 00:00:00 +0900</lastBuildDate><atom:link href="https://minnnje.github.io/tags/optimal-transport/index.xml" rel="self" type="application/rss+xml"/><item><title>Sinkhorn-Knopp Algorithm</title><link>https://minnnje.github.io/study/algorithm/sinkhorn-knopp-algorithm/</link><pubDate>Sun, 02 Aug 2026 00:00:00 +0900</pubDate><guid>https://minnnje.github.io/study/algorithm/sinkhorn-knopp-algorithm/</guid><description>&lt;h2 id="오늘-배운-것"&gt;오늘 배운 것&lt;/h2&gt;
+&lt;p&gt;Sinkhorn-Knopp 알고리즘을 세 층위로 나눠 정리했다.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;고전 버전(1967)&lt;/strong&gt;: 임의의 양수 행렬을 doubly stochastic matrix(행/열 합이
+모두 1)로 바꾸는, 행/열 정규화를 번갈아 반복하는 순수한 행렬 균형화 절차.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;최적수송(OT) 버전(Cuturi, 2013)&lt;/strong&gt;: 엔트로피 정규화를 더한 최적수송 문제의
+해가 \(\mathrm{diag}(u)\,K\,\mathrm{diag}(v)\) 형태를 갖는다는 걸 보이고,
+그 스케일 벡터 \(u, v\)를 구하는 데 같은 반복 구조를 재사용한 것.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;EPTQ에서의 응용&lt;/strong&gt;: 두 버전과 다른 목적(행/열 합=1이 아니라 행/열 L1
+평균의 균일화)으로, 같은 행 정규화 ↔ 열 정규화 교대 구조를 가중치 행렬
+스케일링에 재사용.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;핵심은 세 가지가 전부 &lt;strong&gt;같은 반복 구조를, 다른 목적함수/제약에 적용&lt;/strong&gt;한다는
+점이다.&lt;/p&gt;</description></item></channel></rss>
